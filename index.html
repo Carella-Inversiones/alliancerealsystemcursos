@@ -125,6 +125,15 @@
   .cart-fab:hover{ background:var(--navy2); }
   .cart-fab .count{ background:var(--gold); color:#fff; border-radius:50%; width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; font-size:11.5px; }
 
+  .comments-fab{ position:fixed; bottom:80px; right:24px; z-index:80; background:#fff; color:var(--navy); border:1.5px solid var(--navy); border-radius:50px; padding:12px 20px; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 8px 24px rgba(13,36,64,.18); }
+  .comments-fab:hover{ background:var(--navy); color:#fff; }
+
+  .comments-course-list{ display:flex; flex-direction:column; gap:8px; }
+  .comments-course-item{ text-align:left; background:var(--suave); border:1px solid var(--linea); border-radius:8px; padding:12px 14px; font-size:13px; color:var(--tinta); cursor:pointer; }
+  .comments-course-item:hover{ border-color:var(--gold); color:var(--navy); }
+  .comments-back{ background:none; border:none; color:var(--gold); font-size:12px; font-weight:700; cursor:pointer; margin-bottom:14px; padding:0; }
+  .comments-back:hover{ text-decoration:underline; }
+
   .cart-overlay{ position:fixed; inset:0; background:rgba(13,36,64,.55); z-index:90; display:none; }
   .cart-overlay.open{ display:block; }
   .cart-drawer{ position:fixed; top:0; right:0; bottom:0; width:100%; max-width:420px; background:#fff; z-index:91; transform:translateX(100%); transition:transform .25s ease; display:flex; flex-direction:column; }
@@ -184,6 +193,9 @@
 
 <button class="cart-fab" id="cartFab" type="button">
   🛒 Carrito <span class="count" id="cartCount">0</span>
+</button>
+<button class="comments-fab" id="commentsFab" type="button">
+  💬 Comentarios
 </button>
 
 <div class="cart-overlay" id="cartOverlay"></div>
@@ -273,8 +285,8 @@ const CURSOS = [
     slug: "pozo",
     numero: "07",
     titulo: "Vender en <b>Pozo</b>",
-    desc: "Fideicomiso, SA y SRL, el índice CAC, rentabilidad esperada y el proceso de venta completo — con módulo bonus de argumentos de venta por estructura.",
-    modulos: 7, bonus: true, precio: 20000
+    desc: "Fideicomiso, SA y SRL, el índice CAC, rentabilidad esperada, apto crédito y barrios cerrados, y el proceso de venta completo — con módulo bonus de argumentos de venta por estructura.",
+    modulos: 8, bonus: true, precio: 20000
   },
   {
     slug: "legal-fiscal",
@@ -320,20 +332,53 @@ const EMAIL_ADDR = "alliance@carella.com.ar";
 const CUSDIS_APP_ID = "aa5ee880-ced9-47be-ba8c-f291954ef3fb";
 const SITE_URL = "https://alliancerealsystemcapacitaciones.netlify.app";
 
-// Modal compartido de comentarios: Cusdis solo puede inicializar un widget
-// por vez (busca siempre el mismo ID fijo "cusdis_thread"), así que en vez
-// de mostrarlo dentro de cada tarjeta, lo mostramos en una ventana emergente
-// única — así queda claro que estás cambiando de conversación, no perdiendo
-// la anterior.
+// Panel independiente de comentarios: un botón flotante único (como el
+// carrito) que muestra primero la lista de cursos, y al elegir uno carga
+// su widget de Cusdis. Cusdis solo puede inicializar un widget por vez
+// (busca siempre el mismo ID fijo "cusdis_thread"), por eso mostramos
+// uno a la vez en vez de todos juntos.
 const commentsOverlay = document.getElementById("commentsOverlay");
 const commentsDrawer = document.getElementById("commentsDrawer");
 const commentsModalTitle = document.getElementById("commentsModalTitle");
 const commentsModalBody = document.getElementById("commentsModalBody");
 const commentsModalClose = document.getElementById("commentsModalClose");
+const commentsFab = document.getElementById("commentsFab");
 
-function openComments(tituloCorto, pageId, pageTitle, pageUrl){
+function showCommentsList(){
+  commentsModalTitle.textContent = "Comentarios";
+  commentsModalBody.innerHTML = "";
+
+  const intro = document.createElement("p");
+  intro.style.cssText = "font-size:12.5px;color:#6b7785;margin-bottom:14px;";
+  intro.textContent = "Elegí sobre qué curso querés ver o dejar un comentario:";
+  commentsModalBody.appendChild(intro);
+
+  const list = document.createElement("div");
+  list.className = "comments-course-list";
+  CURSOS.forEach(curso => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "comments-course-item";
+    item.innerHTML = curso.titulo;
+    item.addEventListener("click", () => {
+      const tituloLimpio = curso.titulo.replace(/<\/?b>/g,'');
+      showCommentsThread(tituloLimpio, curso.slug, tituloLimpio, `${SITE_URL}/#${curso.slug}`);
+    });
+    list.appendChild(item);
+  });
+  commentsModalBody.appendChild(list);
+}
+
+function showCommentsThread(tituloCorto, pageId, pageTitle, pageUrl){
   commentsModalTitle.innerHTML = `Comentarios — <b>${tituloCorto}</b>`;
   commentsModalBody.innerHTML = "";
+
+  const back = document.createElement("button");
+  back.type = "button";
+  back.className = "comments-back";
+  back.textContent = "‹ Elegir otro curso";
+  back.addEventListener("click", showCommentsList);
+  commentsModalBody.appendChild(back);
 
   const mount = document.createElement("div");
   mount.id = "cusdis_thread";
@@ -348,10 +393,13 @@ function openComments(tituloCorto, pageId, pageTitle, pageUrl){
   script.src = "https://cusdis.com/js/cusdis.es.js";
   script.async = true;
   document.body.appendChild(script);
+}
 
+commentsFab.addEventListener("click", () => {
+  showCommentsList();
   commentsOverlay.classList.add("open");
   commentsDrawer.classList.add("open");
-}
+});
 
 function closeComments(){
   commentsOverlay.classList.remove("open");
@@ -361,13 +409,6 @@ commentsModalClose.addEventListener("click", closeComments);
 commentsOverlay.addEventListener("click", (e) => {
   if(e.target === commentsOverlay) closeComments();
 });
-
-function commentsBlockHTML(curso){
-  return `
-    <div class="comments-section">
-      <button type="button" class="comments-btn" data-open-comments>Ver / dejar un comentario de este curso</button>
-    </div>`;
-}
 
 function buildModulesList(curso){
   let html = "";
@@ -421,8 +462,6 @@ function renderCard(curso){
           <button type="button" class="consult-btn mail" data-mail>Enviar por email</button>
         </div>
       </div>
-
-      ${commentsBlockHTML(curso)}
     </div>
   `;
 
@@ -481,18 +520,6 @@ function renderCard(curso){
     const subject = `Consulta — ${curso.titulo.replace(/<\/?b>/g,'')}`;
     const body = q;
     window.location.href = `mailto:${EMAIL_ADDR}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  });
-
-  // Lógica de comentarios: abre el modal compartido con los comentarios de este curso
-  const commentsBtn = card.querySelector("[data-open-comments]");
-  commentsBtn.addEventListener("click", () => {
-    const tituloLimpio = curso.titulo.replace(/<\/?b>/g,'');
-    openComments(
-      tituloLimpio,
-      curso.slug,
-      tituloLimpio,
-      `${SITE_URL}/#${curso.slug}`
-    );
   });
 
   // Lógica de carrito
