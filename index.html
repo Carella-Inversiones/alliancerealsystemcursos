@@ -188,7 +188,7 @@
       <span class="label">Total</span>
       <span class="amount" id="cartTotal">$0</span>
     </div>
-    <input type="email" id="cartEmail" placeholder="Tu email (ahí llegan las claves)">
+    <input type="email" id="cartEmail" placeholder="Tu email de contacto">
     <button class="checkout-btn" id="checkoutBtn" type="button">Pagar con Mercado Pago</button>
     <div class="checkout-msg" id="checkoutMsg"></div>
   </div>
@@ -629,7 +629,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const pago = urlParams.get("pago");
 const banner = document.getElementById("paymentBanner");
 if(pago === "exito"){
-  banner.innerHTML = '<div class="payment-banner-inner ok">¡Pago aprobado! En unos minutos te llega un mail con las claves de acceso de tus cursos.</div>';
+  banner.innerHTML = '<div class="payment-banner-inner ok">¡Pago aprobado! En breve te contactamos con las claves de acceso de tus cursos.</div>';
   localStorage.removeItem(CART_KEY);
 } else if(pago === "pendiente"){
   banner.innerHTML = '<div class="payment-banner-inner pending">Tu pago está pendiente de confirmación. Apenas se apruebe, te llega el mail con las claves.</div>';
