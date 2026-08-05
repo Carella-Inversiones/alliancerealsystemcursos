@@ -69,10 +69,10 @@ exports.handler = async (event) => {
       return { statusCode: 500, body: JSON.stringify({ error: "No se pudo crear el pago" }) };
     }
 
-    // Mercado Pago solo devuelve sandbox_init_point cuando la aplicación está
-    // en modo prueba — es una señal más confiable que el prefijo del token,
-    // que dejó de ser distintivo (TEST- vs APP_USR-) en algunas cuentas.
-    const initPoint = data.sandbox_init_point || data.init_point;
+    // Preferimos init_point (el checkout real) — solo si no viene, usamos
+    // sandbox_init_point como respaldo. Antes era al revés y por eso el
+    // checkout quedaba en modo Sandbox incluso con token de producción.
+    const initPoint = data.init_point || data.sandbox_init_point;
 
     return {
       statusCode: 200,
