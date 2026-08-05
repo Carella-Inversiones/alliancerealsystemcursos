@@ -69,12 +69,10 @@ exports.handler = async (event) => {
       return { statusCode: 500, body: JSON.stringify({ error: "No se pudo crear el pago" }) };
     }
 
-    // Con credenciales de PRUEBA hay que usar sandbox_init_point para que
-    // el checkout muestre el flujo de test (tarjetas de prueba).
-    const esTokenDePrueba = (process.env.MP_ACCESS_TOKEN || "").startsWith("TEST-");
-    const initPoint = esTokenDePrueba
-      ? (data.sandbox_init_point || data.init_point)
-      : (data.init_point || data.sandbox_init_point);
+    // Mercado Pago solo devuelve sandbox_init_point cuando la aplicación está
+    // en modo prueba — es una señal más confiable que el prefijo del token,
+    // que dejó de ser distintivo (TEST- vs APP_USR-) en algunas cuentas.
+    const initPoint = data.sandbox_init_point || data.init_point;
 
     return {
       statusCode: 200,
