@@ -344,59 +344,29 @@ const commentsModalBody = document.getElementById("commentsModalBody");
 const commentsModalClose = document.getElementById("commentsModalClose");
 const commentsFab = document.getElementById("commentsFab");
 
-function showCommentsList(){
+commentsFab.addEventListener("click", () => {
   commentsModalTitle.textContent = "Comentarios";
   commentsModalBody.innerHTML = "";
 
-  const intro = document.createElement("p");
-  intro.style.cssText = "font-size:12.5px;color:#6b7785;margin-bottom:14px;";
-  intro.textContent = "Elegí sobre qué curso querés ver o dejar un comentario:";
-  commentsModalBody.appendChild(intro);
-
-  const list = document.createElement("div");
-  list.className = "comments-course-list";
-  CURSOS.forEach(curso => {
-    const item = document.createElement("button");
-    item.type = "button";
-    item.className = "comments-course-item";
-    item.innerHTML = curso.titulo;
-    item.addEventListener("click", () => {
-      const tituloLimpio = curso.titulo.replace(/<\/?b>/g,'');
-      showCommentsThread(tituloLimpio, curso.slug, tituloLimpio, `${SITE_URL}/#${curso.slug}`);
-    });
-    list.appendChild(item);
-  });
-  commentsModalBody.appendChild(list);
-}
-
-function showCommentsThread(tituloCorto, pageId, pageTitle, pageUrl){
-  commentsModalTitle.innerHTML = `Comentarios — <b>${tituloCorto}</b>`;
-  commentsModalBody.innerHTML = "";
-
-  const back = document.createElement("button");
-  back.type = "button";
-  back.className = "comments-back";
-  back.textContent = "‹ Elegir otro curso";
-  back.addEventListener("click", showCommentsList);
-  commentsModalBody.appendChild(back);
+  const hint = document.createElement("p");
+  hint.style.cssText = "font-size:12px;color:#6b7785;margin-bottom:14px; line-height:1.5;";
+  hint.textContent = "Dejá tu comentario o consulta acá abajo. Si es sobre un curso puntual, contanos cuál al principio de tu mensaje (por ejemplo: \"Sobre Vender en Pozo...\") — es opcional.";
+  commentsModalBody.appendChild(hint);
 
   const mount = document.createElement("div");
   mount.id = "cusdis_thread";
   mount.setAttribute("data-host", "https://cusdis.com");
   mount.setAttribute("data-app-id", CUSDIS_APP_ID);
-  mount.setAttribute("data-page-id", pageId);
-  mount.setAttribute("data-page-url", pageUrl);
-  mount.setAttribute("data-page-title", pageTitle);
+  mount.setAttribute("data-page-id", "comentarios-generales");
+  mount.setAttribute("data-page-url", `${SITE_URL}/`);
+  mount.setAttribute("data-page-title", "Comentarios generales");
   commentsModalBody.appendChild(mount);
 
   const script = document.createElement("script");
   script.src = "https://cusdis.com/js/cusdis.es.js";
   script.async = true;
   document.body.appendChild(script);
-}
 
-commentsFab.addEventListener("click", () => {
-  showCommentsList();
   commentsOverlay.classList.add("open");
   commentsDrawer.classList.add("open");
 });
