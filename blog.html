@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notas — Alliance Real System</title>
+<style>
+  :root{
+    --navy:#0d2440; --navy2:#16345c; --gold:#b5894e;
+    --tinta:#1d2733; --gris:#6b7785; --linea:#e2e6ea; --suave:#f6f7f9;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{ font-family:'Helvetica Neue', Arial, 'Liberation Sans', sans-serif; color:var(--tinta); background:var(--suave); line-height:1.6; }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; }
+
+  header{ background:var(--navy); padding:20px 6vw; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(0,0,0,.15); }
+  .logo-wrap{ background:#fff; border-radius:10px; padding:8px 12px; display:inline-flex; }
+  .logo-wrap img{ height:36px; }
+  header nav a{ color:#dbe2ea; text-decoration:none; font-size:13px; letter-spacing:.5px; margin-left:28px; }
+  header nav a:hover{ color:var(--gold); }
+
+  .hero{ background:linear-gradient(180deg, var(--navy) 0%, var(--navy2) 100%); color:#fff; padding:64px 6vw 84px; text-align:center; }
+  .hero .eyebrow{ font-size:11px; letter-spacing:4px; text-transform:uppercase; color:var(--gold); margin-bottom:18px; }
+  .hero h1{ font-size:clamp(28px,5vw,46px); font-weight:300; }
+  .hero h1 b{ font-weight:700; }
+  .hero p{ margin:18px auto 0; max-width:520px; color:#c4cdd8; font-size:15px; }
+  .hero .gold-rule{ width:56px; height:3px; background:var(--gold); margin:26px auto 0; }
+
+  main{ max-width:760px; margin:-48px auto 0; padding:0 6vw 100px; position:relative; z-index:2; }
+  .post{ background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 8px 30px rgba(13,36,64,.12); margin-bottom:28px; }
+  .post-head{ padding:26px 28px 20px; }
+  .post-date{ font-size:10.5px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:10px; }
+  .post h2{ font-size:23px; font-weight:300; color:var(--navy); line-height:1.3; }
+  .post h2 b{ font-weight:700; }
+  .post-gold-rule{ width:38px; height:3px; background:var(--gold); margin:12px 0 0; }
+  .post-body{ padding:0 28px 26px; font-size:14.5px; color:var(--tinta); }
+  .post-body p{ margin-bottom:14px; }
+  .post-body p:last-child{ margin-bottom:0; }
+
+  .comments-section{ border-top:1px solid var(--linea); padding:18px 28px 26px; }
+  .comments-btn{ width:100%; background:#fff; border:1.5px solid var(--navy); color:var(--navy); font-size:12.5px; font-weight:700; padding:11px 14px; border-radius:8px; cursor:pointer; letter-spacing:.2px; }
+  .comments-btn:hover{ background:var(--navy); color:#fff; }
+  .comments-mount-area{ margin-top:14px; }
+  .cusdis-mount{ min-height:40px; }
+
+  .empty-note{ text-align:center; color:var(--gris); font-size:13px; padding:40px 20px; }
+
+  footer{ background:var(--navy); color:#c4cdd8; padding:48px 6vw; text-align:center; font-size:12px; }
+  footer .logo-wrap{ margin:0 auto 16px; }
+  footer a{ color:var(--gold); text-decoration:none; }
+
+  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo-wrap" href="index.html"><img src="assets/logo.png" alt="Alliance Real System"></a>
+  <nav>
+    <a href="index.html">Cursos</a>
+    <a href="index.html#contacto">Contacto</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Alliance Real System · Notas</div>
+  <h1>Ideas y actualizaciones para <b>agentes inmobiliarios</b></h1>
+  <p>Notas cortas sobre el mercado, los cursos y el negocio — actualizado a medida que aparece algo que vale la pena compartir.</p>
+  <div class="gold-rule"></div>
+</section>
+
+<main id="posts"></main>
+
+<footer>
+  <a class="logo-wrap" href="index.html"><img src="assets/logo.png" alt="Alliance Real System"></a>
+  <p><a href="index.html">Ver catálogo de cursos</a></p>
+  <p style="margin-top:10px;">¿Consultas generales? Escribinos a <a href="mailto:alliance@carella.com.ar">alliance@carella.com.ar</a> o por <a href="https://wa.me/5491168887892" target="_blank" rel="noopener">WhatsApp</a>.</p>
+  <p style="margin-top:14px; color:#7d8ba0;">© Alliance Real System — Todos los cursos son de uso personal e intransferible.</p>
+</footer>
+
+<script>
+// ---------------------------------------------------------------
+// NOTAS DEL BLOG
+// Para publicar una nota nueva, agregá un objeto al principio de este array
+// (arriba de las demás, así aparece primera) y volvé a subir el sitio.
+// El campo "id" tiene que ser único y sin espacios (se usa para los comentarios).
+// El campo "cuerpo" acepta varios párrafos: separalos con arrays de strings.
+// ---------------------------------------------------------------
+const POSTS = [
+  {
+    id: "bienvenida-2026",
+    fecha: "Agosto 2026",
+    titulo: "Bienvenidos a las <b>notas de Alliance Real System</b>",
+    cuerpo: [
+      "Esta sección va a ir sumando ideas cortas, novedades del mercado y contenido complementario a los cursos — pensado para leer rápido, no para reemplazar el material completo de cada curso.",
+      "Si tenés un tema puntual que te gustaría ver acá, dejalo en los comentarios de esta misma nota."
+    ]
+  },
+  {
+    id: "ejemplo-nota-mercado",
+    fecha: "Agosto 2026",
+    titulo: "Cómo usar estas <b>notas</b> junto con los cursos",
+    cuerpo: [
+      "Cada curso del catálogo profundiza un tema de punta a punta. Estas notas son más cortas: sirven para actualizar un dato puntual, comentar una novedad normativa, o compartir un caso concreto sin esperar a la próxima actualización de un módulo completo.",
+      "Podés dejar tu consulta o comentario en cualquier nota — se revisa antes de publicarse."
+    ]
+  }
+];
+
+// Pegá acá el mismo App ID que usaste en index.html
+const CUSDIS_APP_ID = "aa5ee880-ced9-47be-ba8c-f291954ef3fb";
+const SITE_URL = "https://kaleidoscopic-medovik-01702c.netlify.app";
+
+// Un solo widget de comentarios "activo" por vez (mismo criterio que index.html)
+let currentCommentsContainer = null;
+
+function openComments(containerEl, pageId, pageTitle, pageUrl){
+  if(currentCommentsContainer && currentCommentsContainer !== containerEl){
+    currentCommentsContainer.innerHTML = "";
+  }
+  currentCommentsContainer = containerEl;
+
+  containerEl.innerHTML = "";
+  const mount = document.createElement("div");
+  mount.id = "cusdis_thread";
+  mount.setAttribute("data-host", "https://cusdis.com");
+  mount.setAttribute("data-app-id", CUSDIS_APP_ID);
+  mount.setAttribute("data-page-id", pageId);
+  mount.setAttribute("data-page-url", pageUrl);
+  mount.setAttribute("data-page-title", pageTitle);
+  containerEl.appendChild(mount);
+
+  const script = document.createElement("script");
+  script.src = "https://cusdis.com/js/cusdis.es.js";
+  script.async = true;
+  document.body.appendChild(script);
+}
+
+function renderPost(post){
+  const article = document.createElement("article");
+  article.className = "post";
+  const parrafos = post.cuerpo.map(p => `<p>${p}</p>`).join("");
+  const pageId = `blog-${post.id}`;
+  const pageTitle = post.titulo.replace(/<\/?b>/g,'');
+  article.innerHTML = `
+    <div class="post-head">
+      <div class="post-date">${post.fecha}</div>
+      <h2>${post.titulo}</h2>
+      <div class="post-gold-rule"></div>
+    </div>
+    <div class="post-body">${parrafos}</div>
+    <div class="comments-section">
+      <button type="button" class="comments-btn" data-open-comments>Ver / dejar un comentario de esta nota</button>
+      <div class="comments-mount-area" data-comments-area></div>
+    </div>
+  `;
+  const btn = article.querySelector("[data-open-comments]");
+  const area = article.querySelector("[data-comments-area]");
+  btn.addEventListener("click", () => {
+    openComments(area, pageId, pageTitle, `${SITE_URL}/blog.html#${pageId}`);
+    btn.style.display = "none";
+  });
+  return article;
+}
+
+const container = document.getElementById("posts");
+if(POSTS.length === 0){
+  container.innerHTML = '<p class="empty-note">Todavía no hay notas publicadas.</p>';
+} else {
+  POSTS.forEach(post => container.appendChild(renderPost(post)));
+}
+</script>
+
+</body>
+</html>

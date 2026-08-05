@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alliance Real System — Formación para Agentes Inmobiliarios</title>
+<style>
+  :root{
+    --navy:#0d2440;
+    --navy2:#16345c;
+    --gold:#b5894e;
+    --tinta:#1d2733;
+    --gris:#6b7785;
+    --linea:#e2e6ea;
+    --suave:#f6f7f9;
+    --ok:#2e7d4f;
+    --error:#b5432f;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{ font-family:'Helvetica Neue', Arial, 'Liberation Sans', sans-serif; color:var(--tinta); background:var(--suave); line-height:1.5; }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; }
+
+  /* ---------- HEADER ---------- */
+  header{ background:var(--navy); padding:20px 6vw; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(0,0,0,.15); }
+  .logo-wrap{ background:#fff; border-radius:10px; padding:8px 12px; display:inline-flex; }
+  .logo-wrap img{ height:36px; }
+  header nav a{ color:#dbe2ea; text-decoration:none; font-size:13px; letter-spacing:.5px; margin-left:28px; }
+  header nav a:hover{ color:var(--gold); }
+  header nav{ display:none; }
+  @media(min-width:760px){ header nav{ display:block; } }
+
+  /* ---------- HERO ---------- */
+  .hero{ background:linear-gradient(180deg, var(--navy) 0%, var(--navy2) 100%); color:#fff; padding:72px 6vw 96px; text-align:center; }
+  .hero .eyebrow{ font-size:11px; letter-spacing:4px; text-transform:uppercase; color:var(--gold); margin-bottom:18px; }
+  .hero h1{ font-size:clamp(30px,5vw,52px); font-weight:300; line-height:1.15; max-width:820px; margin:0 auto; }
+  .hero h1 b{ font-weight:700; }
+  .hero p{ margin:22px auto 0; max-width:560px; color:#c4cdd8; font-size:16px; }
+  .hero .gold-rule{ width:56px; height:3px; background:var(--gold); margin:28px auto 0; }
+
+  /* ---------- CATALOG GRID ---------- */
+  .catalog{ max-width:1180px; margin:-56px auto 0; padding:0 6vw 100px; position:relative; z-index:2; }
+  .grid{ display:grid; grid-template-columns:1fr; gap:28px; }
+  @media(min-width:720px){ .grid{ grid-template-columns:1fr 1fr; } }
+  @media(min-width:1080px){ .grid{ grid-template-columns:1fr 1fr 1fr; } }
+
+  /* ---------- COURSE CARD ---------- */
+  .card{ background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 8px 30px rgba(13,36,64,.12); display:flex; flex-direction:column; }
+  .card-head{ background:var(--navy); padding:22px 24px 20px; color:#fff; }
+  .card-badge{ display:inline-block; font-size:9.5px; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold); border:1px solid rgba(255,255,255,.3); border-radius:20px; padding:4px 12px; margin-bottom:14px; }
+  .card-head h3{ font-size:20px; font-weight:300; line-height:1.25; }
+  .card-head h3 b{ font-weight:700; }
+  .card-gold-rule{ width:36px; height:3px; background:var(--gold); margin:12px 0 0; }
+
+  .card-body{ padding:22px 24px 26px; flex:1; display:flex; flex-direction:column; gap:16px; }
+  .card-desc{ font-size:13.5px; color:var(--tinta); line-height:1.6; }
+  .card-meta{ display:flex; gap:10px; flex-wrap:wrap; font-size:11px; color:var(--gris); }
+  .meta-pill{ background:var(--suave); border:1px solid var(--linea); border-radius:20px; padding:4px 11px; }
+
+  .sample-btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--suave); border:1px solid var(--linea); color:var(--navy); text-decoration:none; font-size:12.5px; font-weight:700; letter-spacing:.3px; padding:11px 14px; border-radius:8px; text-align:center; }
+  .sample-btn:hover{ border-color:var(--gold); color:var(--gold); }
+
+  /* ---------- ACCESS GATE ---------- */
+  .gate{ border:1.5px dashed var(--linea); border-radius:10px; padding:16px; }
+  .gate-label{ font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:10px; }
+  .gate-row{ display:flex; gap:8px; }
+  .gate-row input{ flex:1; min-width:0; border:1px solid var(--linea); border-radius:7px; padding:10px 12px; font-size:13px; font-family:inherit; }
+  .gate-row input:focus{ outline:2px solid var(--gold); outline-offset:1px; border-color:var(--gold); }
+  .gate-row button{ flex-shrink:0; background:var(--navy); color:#fff; border:none; border-radius:7px; padding:0 14px; font-size:12px; font-weight:700; cursor:pointer; letter-spacing:.2px; white-space:nowrap; }
+  .gate-row button:hover{ background:var(--navy2); }
+  .gate-msg{ font-size:11.5px; margin-top:9px; min-height:14px; }
+  .gate-msg.error{ color:var(--error); }
+  .gate-msg.ok{ color:var(--ok); }
+
+  .modules-list{ display:none; flex-direction:column; gap:6px; margin-top:6px; }
+  .modules-list.open{ display:flex; }
+  .modules-list a{ display:flex; justify-content:space-between; align-items:center; text-decoration:none; color:var(--navy); font-size:12.5px; padding:9px 12px; border-radius:7px; background:var(--suave); border:1px solid var(--linea); }
+  .modules-list a:hover{ border-color:var(--gold); }
+  .modules-list a span.arrow{ color:var(--gold); font-weight:700; }
+  .modules-list a.bonus{ border-style:dashed; border-color:var(--gold); }
+
+  .comments-section{ border-top:1px solid var(--linea); padding-top:16px; }
+  .comments-btn{ width:100%; background:#fff; border:1.5px solid var(--navy); color:var(--navy); font-size:12.5px; font-weight:700; padding:11px 14px; border-radius:8px; cursor:pointer; letter-spacing:.2px; }
+  .comments-btn:hover{ background:var(--navy); color:#fff; }
+  .comments-mount-area{ margin-top:14px; }
+  .cusdis-mount{ min-height:40px; }
+
+  /* ---------- CONSULTAS ---------- */
+  .consult{ border-top:1px solid var(--linea); padding-top:16px; }
+  .consult-label{ font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gris); font-weight:700; margin-bottom:10px; }
+  .consult textarea{ width:100%; border:1px solid var(--linea); border-radius:7px; padding:10px 12px; font-size:12.5px; font-family:inherit; resize:vertical; min-height:64px; }
+  .consult textarea:focus{ outline:2px solid var(--gold); outline-offset:1px; border-color:var(--gold); }
+  .consult-actions{ display:flex; gap:8px; margin-top:9px; flex-wrap:wrap; }
+  .consult-btn{ flex:1; min-width:120px; text-align:center; text-decoration:none; font-size:11.5px; font-weight:700; letter-spacing:.2px; padding:10px 10px; border-radius:7px; border:1px solid var(--linea); cursor:pointer; background:#fff; }
+  .consult-btn.wa{ color:#1f8a4c; }
+  .consult-btn.wa:hover{ border-color:#1f8a4c; background:#f2faf5; }
+  .consult-btn.mail{ color:var(--navy); }
+  .consult-btn.mail:hover{ border-color:var(--navy); background:var(--suave); }
+
+  /* ---------- FOOTER ---------- */
+  footer{ background:var(--navy); color:#c4cdd8; padding:48px 6vw; text-align:center; font-size:12px; }
+  footer .logo-wrap{ margin:0 auto 16px; }
+  footer a{ color:var(--gold); text-decoration:none; }
+
+  /* ---------- PRECIO Y CARRITO ---------- */
+  .price-row{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+  .price{ font-size:22px; font-weight:700; color:var(--navy); }
+  .price small{ font-size:11px; font-weight:400; color:var(--gris); }
+  .add-cart-btn{ width:100%; background:var(--gold); color:#fff; border:none; font-size:12.5px; font-weight:700; padding:12px 14px; border-radius:8px; cursor:pointer; letter-spacing:.2px; }
+  .add-cart-btn:hover{ background:#a17a44; }
+  .add-cart-btn.in-cart{ background:var(--ok); }
+
+  .cart-fab{ position:fixed; bottom:24px; right:24px; z-index:80; background:var(--navy); color:#fff; border:none; border-radius:50px; padding:14px 20px; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 8px 24px rgba(13,36,64,.35); display:flex; align-items:center; gap:8px; }
+  .cart-fab:hover{ background:var(--navy2); }
+  .cart-fab .count{ background:var(--gold); color:#fff; border-radius:50%; width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; font-size:11.5px; }
+
+  .cart-overlay{ position:fixed; inset:0; background:rgba(13,36,64,.55); z-index:90; display:none; }
+  .cart-overlay.open{ display:block; }
+  .cart-drawer{ position:fixed; top:0; right:0; bottom:0; width:100%; max-width:420px; background:#fff; z-index:91; transform:translateX(100%); transition:transform .25s ease; display:flex; flex-direction:column; }
+  .cart-drawer.open{ transform:translateX(0); }
+  .cart-head{ background:var(--navy); color:#fff; padding:20px 22px; display:flex; justify-content:space-between; align-items:center; }
+  .cart-head h3{ font-weight:300; font-size:18px; }
+  .cart-close{ background:none; border:none; color:#fff; font-size:22px; cursor:pointer; line-height:1; }
+  .cart-items{ flex:1; overflow-y:auto; padding:18px 22px; display:flex; flex-direction:column; gap:12px; }
+  .cart-item{ display:flex; justify-content:space-between; align-items:center; gap:10px; border-bottom:1px solid var(--linea); padding-bottom:12px; }
+  .cart-item-title{ font-size:13px; color:var(--tinta); }
+  .cart-item-remove{ background:none; border:none; color:var(--error); font-size:12px; cursor:pointer; text-decoration:underline; white-space:nowrap; }
+  .cart-empty{ color:var(--gris); font-size:13px; text-align:center; padding:40px 10px; }
+  .cart-bundle-hint{ background:var(--suave); border:1px dashed var(--gold); border-radius:8px; padding:12px 14px; font-size:12px; color:var(--tinta); }
+  .cart-footer{ border-top:1px solid var(--linea); padding:18px 22px 24px; }
+  .cart-total-row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px; }
+  .cart-total-row .label{ font-size:12px; color:var(--gris); text-transform:uppercase; letter-spacing:1px; }
+  .cart-total-row .amount{ font-size:24px; font-weight:700; color:var(--navy); }
+  .cart-footer input{ width:100%; border:1px solid var(--linea); border-radius:7px; padding:11px 12px; font-size:13px; font-family:inherit; margin-bottom:10px; }
+  .cart-footer input:focus{ outline:2px solid var(--gold); outline-offset:1px; border-color:var(--gold); }
+  .checkout-btn{ width:100%; background:#009ee3; color:#fff; border:none; font-size:13.5px; font-weight:700; padding:13px 14px; border-radius:8px; cursor:pointer; }
+  .checkout-btn:hover{ background:#0088c4; }
+  .checkout-btn:disabled{ opacity:.6; cursor:not-allowed; }
+  .checkout-msg{ font-size:11.5px; margin-top:9px; min-height:14px; }
+  .checkout-msg.error{ color:var(--error); }
+
+  .payment-banner{ max-width:1180px; margin:18px auto 0; padding:0 6vw; }
+  .payment-banner-inner{ border-radius:10px; padding:14px 18px; font-size:13.5px; font-weight:700; }
+  .payment-banner-inner.ok{ background:#e6f4ec; color:var(--ok); border:1px solid #b7ddc4; }
+  .payment-banner-inner.error{ background:#fbe9e6; color:var(--error); border:1px solid #f0c3bb; }
+  .payment-banner-inner.pending{ background:#fff6e6; color:#8a6416; border:1px solid #f0dcae; }
+
+  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo-wrap" href="index.html"><img src="assets/logo.png" alt="Alliance Real System"></a>
+  <nav>
+    <a href="#catalogo">Catálogo</a>
+    <a href="blog.html">Notas</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Alliance Real System · Serie de formación</div>
+  <h1>Formación profesional para <b>agentes inmobiliarios</b></h1>
+  <p>Doce cursos en PDF, organizados por módulos, para vender mejor, tasar con criterio y construir una carrera sostenible en el rubro.</p>
+  <div class="gold-rule"></div>
+</section>
+
+<main class="catalog" id="catalogo">
+  <div class="payment-banner" id="paymentBanner"></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<button class="cart-fab" id="cartFab" type="button">
+  🛒 Carrito <span class="count" id="cartCount">0</span>
+</button>
+
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="cart-head">
+    <h3>Tu carrito</h3>
+    <button class="cart-close" id="cartClose" type="button">×</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer">
+    <div class="cart-total-row">
+      <span class="label">Total</span>
+      <span class="amount" id="cartTotal">$0</span>
+    </div>
+    <input type="email" id="cartEmail" placeholder="Tu email (ahí llegan las claves)">
+    <button class="checkout-btn" id="checkoutBtn" type="button">Pagar con Mercado Pago</button>
+    <div class="checkout-msg" id="checkoutMsg"></div>
+  </div>
+</aside>
+
+<footer id="contacto">
+  <a class="logo-wrap" href="index.html"><img src="assets/logo.png" alt="Alliance Real System"></a>
+  <p><a href="blog.html">Ver notas del blog</a></p>
+  <p style="margin-top:10px;">¿Consultas generales? Escribinos a <a href="mailto:alliance@carella.com.ar">alliance@carella.com.ar</a> o por <a href="https://wa.me/5491168887892" target="_blank" rel="noopener">WhatsApp</a>.</p>
+  <p style="margin-top:14px; color:#7d8ba0;">© Alliance Real System — Todos los cursos son de uso personal e intransferible.</p>
+</footer>
+
+<script>
+// ---------------------------------------------------------------
+// DATOS DE LOS CURSOS
+// Para cambiar una clave de acceso, editá el campo "key" de ese curso.
+// ---------------------------------------------------------------
+const CURSOS = [
+  {
+    slug: "de-cero-a-agente",
+    numero: "01",
+    titulo: "De Cero a <b>Agente Inmobiliario</b>",
+    desc: "La hoja de ruta completa para quien está arrancando: fundamentos, matrícula, captación, tasación, marketing, visitas, cierre y documentación.",
+    modulos: 9, bonus: false, precio: 20000
+  },
+  {
+    slug: "top-performer",
+    numero: "02",
+    titulo: "De Agente a <b>Top Performer</b>",
+    desc: "Para el agente que ya vende y quiere sistematizar: mindset, especialización, referidos, negociación avanzada, métricas y apalancamiento.",
+    modulos: 8, bonus: false, precio: 20000
+  },
+  {
+    slug: "seguimiento",
+    numero: "03",
+    titulo: "Seguimiento que <b>Cierra</b>",
+    desc: "Por qué el seguimiento es el negocio, cómo manejar el silencio del \"visto\", el seguimiento post-visita, cadencias y guiones listos para usar.",
+    modulos: 6, bonus: false, precio: 20000
+  },
+  {
+    slug: "redes",
+    numero: "04",
+    titulo: "Redes que <b>Venden</b>",
+    desc: "Orgánico, pauta y marca personal explicados a fondo: formularios con lógica condicional, WhatsApp directo, DM, creativos y segmentación.",
+    modulos: 8, bonus: false, precio: 20000
+  },
+  {
+    slug: "ia",
+    numero: "05",
+    titulo: "IA para <b>Agentes Inmobiliarios</b>",
+    desc: "Gemini como closer y resumidor, ChatGPT para imágenes, y Claude para ACM, documentación, análisis y automatizaciones.",
+    modulos: 8, bonus: false, precio: 20000
+  },
+  {
+    slug: "lenguaje",
+    numero: "06",
+    titulo: "El Lenguaje que <b>Vende</b>",
+    desc: "El diccionario de palabras prohibidas y sus reemplazos, preguntas sin interrogatorio, guiar sin empujar, y el poder del refuerzo.",
+    modulos: 6, bonus: false, precio: 20000
+  },
+  {
+    slug: "pozo",
+    numero: "07",
+    titulo: "Vender en <b>Pozo</b>",
+    desc: "Fideicomiso, SA y SRL, el índice CAC, rentabilidad esperada y el proceso de venta completo — con módulo bonus de argumentos de venta por estructura.",
+    modulos: 7, bonus: true, precio: 20000
+  },
+  {
+    slug: "legal-fiscal",
+    numero: "08",
+    titulo: "Legal y <b>Fiscal</b>",
+    desc: "Monotributo vs. Responsable Inscripto, cómo facturar tu comisión, Ganancias y Bienes Personales, due diligence de una propiedad y sucesiones.",
+    modulos: 8, bonus: false, precio: 20000
+  },
+  {
+    slug: "alta-gama",
+    numero: "09",
+    titulo: "Alta Gama: <b>Real Estate de Lujo</b>",
+    desc: "Los círculos que hay que tocar, la presencia que hay que construir, qué busca el propietario y el comprador, y cómo se capta, tasa y cierra.",
+    modulos: 8, bonus: false, precio: 20000
+  },
+  {
+    slug: "lotes",
+    numero: "10",
+    titulo: "Lotes en CABA: <b>Capacidad Constructiva y Venta</b>",
+    desc: "USAB, USAM, USAA, APH, catalogación, DGIUR y DGROC, factibilidad técnica y económica — con módulo bonus de caso práctico real.",
+    modulos: 9, bonus: true, precio: 20000
+  },
+  {
+    slug: "equipo",
+    numero: "11",
+    titulo: "Armar y Liderar <b>tu Equipo</b>",
+    desc: "Cuándo estás listo, reclutamiento, onboarding, esquemas de comisión, roles, cultura de equipo y liderazgo real.",
+    modulos: 7, bonus: false, precio: 20000
+  },
+  {
+    slug: "finanzas",
+    numero: "12",
+    titulo: "Finanzas Personales con <b>Ingresos Variables</b>",
+    desc: "Fondo de reserva, salario base personal, cuentas separadas, provisión de impuestos, ahorro e inversión, y la psicología del gasto.",
+    modulos: 7, bonus: false, precio: 20000
+  }
+];
+
+const WHATSAPP_NUM = "5491168887892";
+const EMAIL_ADDR = "alliance@carella.com.ar";
+
+// Pegá acá el App ID que te da cusdis.com (botón "Embed Code" del dashboard)
+const CUSDIS_APP_ID = "aa5ee880-ced9-47be-ba8c-f291954ef3fb";
+const SITE_URL = "https://kaleidoscopic-medovik-01702c.netlify.app";
+
+// Caja de comentarios: un solo widget "activo" por vez, recreado con el ID
+// estándar que Cusdis realmente inicializa (evita el problema de IDs múltiples).
+let currentCommentsContainer = null;
+
+function openComments(containerEl, pageId, pageTitle, pageUrl){
+  // Si había otro casillero abierto en otra tarjeta, lo vaciamos primero
+  if(currentCommentsContainer && currentCommentsContainer !== containerEl){
+    currentCommentsContainer.innerHTML = "";
+  }
+  currentCommentsContainer = containerEl;
+
+  containerEl.innerHTML = "";
+  const mount = document.createElement("div");
+  mount.id = "cusdis_thread";
+  mount.setAttribute("data-host", "https://cusdis.com");
+  mount.setAttribute("data-app-id", CUSDIS_APP_ID);
+  mount.setAttribute("data-page-id", pageId);
+  mount.setAttribute("data-page-url", pageUrl);
+  mount.setAttribute("data-page-title", pageTitle);
+  containerEl.appendChild(mount);
+
+  const script = document.createElement("script");
+  script.src = "https://cusdis.com/js/cusdis.es.js";
+  script.async = true;
+  document.body.appendChild(script);
+}
+
+function commentsBlockHTML(curso){
+  return `
+    <div class="comments-section">
+      <button type="button" class="comments-btn" data-open-comments>Ver / dejar un comentario de este curso</button>
+      <div class="comments-mount-area" data-comments-area></div>
+    </div>`;
+}
+
+function buildModulesList(curso){
+  let html = "";
+  for(let i=1;i<=curso.modulos;i++){
+    html += `<a href="cursos/${curso.slug}/Modulo_${i}.pdf" target="_blank" rel="noopener">Módulo ${i} <span class="arrow">↓</span></a>`;
+  }
+  if(curso.bonus){
+    html += `<a class="bonus" href="cursos/${curso.slug}/Modulo_Bonus.pdf" target="_blank" rel="noopener">Módulo Bonus <span class="arrow">↓</span></a>`;
+  }
+  return html;
+}
+
+function renderCard(curso){
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <div class="card-head">
+      <div class="card-badge">Curso ${curso.numero}</div>
+      <h3>${curso.titulo}</h3>
+      <div class="card-gold-rule"></div>
+    </div>
+    <div class="card-body">
+      <p class="card-desc">${curso.desc}</p>
+      <div class="card-meta">
+        <span class="meta-pill">${curso.modulos} módulos</span>
+        ${curso.bonus ? '<span class="meta-pill">+ módulo bonus</span>' : ''}
+      </div>
+
+      <div class="price-row">
+        <span class="price">$${curso.precio.toLocaleString('es-AR')} <small>ARS</small></span>
+      </div>
+      <button type="button" class="add-cart-btn" data-add-cart>Agregar al carrito</button>
+
+      <a class="sample-btn" href="cursos/${curso.slug}/Muestra_Gratis.pdf" target="_blank" rel="noopener">Ver muestra gratuita</a>
+
+      <div class="gate">
+        <div class="gate-label">Acceso para alumnos</div>
+        <div class="gate-row">
+          <input type="text" placeholder="Clave de acceso" data-key-input>
+          <button type="button" data-unlock>Ingresar</button>
+        </div>
+        <div class="gate-msg" data-gate-msg></div>
+        <div class="modules-list" data-modules-list>${buildModulesList(curso)}</div>
+      </div>
+
+      <div class="consult">
+        <div class="consult-label">¿Tenés dudas sobre este curso?</div>
+        <textarea placeholder="Escribí tu consulta acá..." data-question></textarea>
+        <div class="consult-actions">
+          <button type="button" class="consult-btn wa" data-wa>Enviar por WhatsApp</button>
+          <button type="button" class="consult-btn mail" data-mail>Enviar por email</button>
+        </div>
+      </div>
+
+      ${commentsBlockHTML(curso)}
+    </div>
+  `;
+
+  // Lógica de desbloqueo
+  const input = card.querySelector("[data-key-input]");
+  const btn = card.querySelector("[data-unlock]");
+  const msg = card.querySelector("[data-gate-msg]");
+  const list = card.querySelector("[data-modules-list]");
+
+  function tryUnlock(){
+    const value = input.value.trim();
+    if(!value) return;
+    btn.disabled = true;
+    msg.textContent = "Verificando…";
+    msg.className = "gate-msg";
+    fetch("/.netlify/functions/verify-key", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug: curso.slug, key: value })
+    })
+      .then(r => r.json())
+      .then(data => {
+        btn.disabled = false;
+        if(data.valid){
+          msg.textContent = "Acceso concedido. Descargá tus módulos abajo.";
+          msg.className = "gate-msg ok";
+          list.classList.add("open");
+          input.disabled = true;
+        } else {
+          msg.textContent = "Clave incorrecta. Verificala o escribinos si tenés dudas.";
+          msg.className = "gate-msg error";
+        }
+      })
+      .catch(() => {
+        btn.disabled = false;
+        msg.textContent = "No pudimos verificar la clave ahora. Probá de nuevo en un momento.";
+        msg.className = "gate-msg error";
+      });
+  }
+  btn.addEventListener("click", tryUnlock);
+  input.addEventListener("keydown", (e) => { if(e.key === "Enter") tryUnlock(); });
+
+  // Lógica de consulta
+  const question = card.querySelector("[data-question]");
+  const waBtn = card.querySelector("[data-wa]");
+  const mailBtn = card.querySelector("[data-mail]");
+
+  waBtn.addEventListener("click", () => {
+    const q = question.value.trim() || "Quiero hacerte una consulta.";
+    const text = `Hola! Tengo una consulta sobre el curso "${curso.titulo.replace(/<\/?b>/g,'')}": ${q}`;
+    window.open(`https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+  });
+
+  mailBtn.addEventListener("click", () => {
+    const q = question.value.trim() || "Quiero hacerte una consulta.";
+    const subject = `Consulta — ${curso.titulo.replace(/<\/?b>/g,'')}`;
+    const body = q;
+    window.location.href = `mailto:${EMAIL_ADDR}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  });
+
+  // Lógica de comentarios (un widget activo por vez)
+  const commentsBtn = card.querySelector("[data-open-comments]");
+  const commentsArea = card.querySelector("[data-comments-area]");
+  commentsBtn.addEventListener("click", () => {
+    openComments(
+      commentsArea,
+      curso.slug,
+      curso.titulo.replace(/<\/?b>/g,''),
+      `${SITE_URL}/#${curso.slug}`
+    );
+    commentsBtn.style.display = "none";
+  });
+
+  // Lógica de carrito
+  const addCartBtn = card.querySelector("[data-add-cart]");
+  function refreshAddCartBtn(){
+    if(isInCart(curso.slug)){
+      addCartBtn.textContent = "✓ En el carrito — quitar";
+      addCartBtn.classList.add("in-cart");
+    } else {
+      addCartBtn.textContent = "Agregar al carrito";
+      addCartBtn.classList.remove("in-cart");
+    }
+  }
+  addCartBtn.addEventListener("click", () => {
+    if(isInCart(curso.slug)){
+      removeFromCart(curso.slug);
+    } else {
+      addToCart(curso.slug);
+    }
+    refreshAddCartBtn();
+  });
+  refreshAddCartBtn();
+  card.dataset.slug = curso.slug;
+  cardRefreshers.push(refreshAddCartBtn);
+
+  return card;
+}
+
+const grid = document.getElementById("grid");
+const cardRefreshers = [];
+CURSOS.forEach(curso => grid.appendChild(renderCard(curso)));
+
+// ---------------------------------------------------------------
+// CARRITO
+// ---------------------------------------------------------------
+const CART_KEY = "alliance_cart";
+
+function getCart(){
+  try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+  catch(e){ return []; }
+}
+function saveCart(items){
+  localStorage.setItem(CART_KEY, JSON.stringify(items));
+  renderCartUI();
+  cardRefreshers.forEach(fn => fn());
+}
+function isInCart(slug){ return getCart().includes(slug); }
+function addToCart(slug){
+  const items = getCart();
+  if(!items.includes(slug)) items.push(slug);
+  saveCart(items);
+}
+function removeFromCart(slug){
+  saveCart(getCart().filter(s => s !== slug));
+}
+
+function calcularTotalCarrito(items){
+  const todos = CURSOS.map(c => c.slug);
+  const esPackCompleto = items.length === todos.length && todos.every(s => items.includes(s));
+  const total = esPackCompleto ? 120000 : items.length * 20000;
+  return { total, esPackCompleto };
+}
+
+const cartFab = document.getElementById("cartFab");
+const cartCount = document.getElementById("cartCount");
+const cartOverlay = document.getElementById("cartOverlay");
+const cartDrawer = document.getElementById("cartDrawer");
+const cartClose = document.getElementById("cartClose");
+const cartItemsEl = document.getElementById("cartItems");
+const cartTotalEl = document.getElementById("cartTotal");
+const cartEmailEl = document.getElementById("cartEmail");
+const checkoutBtn = document.getElementById("checkoutBtn");
+const checkoutMsg = document.getElementById("checkoutMsg");
+
+function renderCartUI(){
+  const items = getCart();
+  cartCount.textContent = items.length;
+
+  if(items.length === 0){
+    cartItemsEl.innerHTML = '<div class="cart-empty">Todavía no agregaste ningún curso.</div>';
+    cartTotalEl.textContent = "$0";
+    return;
+  }
+
+  const { total, esPackCompleto } = calcularTotalCarrito(items);
+
+  let html = items.map(slug => {
+    const curso = CURSOS.find(c => c.slug === slug);
+    if(!curso) return "";
+    return `<div class="cart-item">
+      <span class="cart-item-title">${curso.titulo.replace(/<\/?b>/g,'')}</span>
+      <button type="button" class="cart-item-remove" data-remove="${slug}">Quitar</button>
+    </div>`;
+  }).join("");
+
+  if(items.length === CURSOS.length){
+    html += `<div class="cart-bundle-hint">🎉 Llevás los 12 cursos — se aplicó el precio de pack completo: $120.000 en vez de $240.000.</div>`;
+  } else if(items.length >= 8){
+    html += `<div class="cart-bundle-hint">Te faltan ${CURSOS.length - items.length} para el pack completo: los 12 juntos salen $120.000 en vez de pagarlos por separado.</div>`;
+  }
+
+  cartItemsEl.innerHTML = html;
+  cartTotalEl.textContent = `$${total.toLocaleString('es-AR')}`;
+
+  cartItemsEl.querySelectorAll("[data-remove]").forEach(btn => {
+    btn.addEventListener("click", () => removeFromCart(btn.dataset.remove));
+  });
+}
+
+function openCart(){ cartOverlay.classList.add("open"); cartDrawer.classList.add("open"); }
+function closeCart(){ cartOverlay.classList.remove("open"); cartDrawer.classList.remove("open"); }
+
+cartFab.addEventListener("click", openCart);
+cartClose.addEventListener("click", closeCart);
+cartOverlay.addEventListener("click", closeCart);
+
+checkoutBtn.addEventListener("click", () => {
+  const items = getCart();
+  const email = cartEmailEl.value.trim();
+
+  if(items.length === 0){
+    checkoutMsg.textContent = "Tu carrito está vacío.";
+    checkoutMsg.className = "checkout-msg error";
+    return;
+  }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    checkoutMsg.textContent = "Ingresá un email válido — ahí te van a llegar las claves.";
+    checkoutMsg.className = "checkout-msg error";
+    return;
+  }
+
+  checkoutBtn.disabled = true;
+  checkoutMsg.textContent = "Redirigiendo a Mercado Pago…";
+  checkoutMsg.className = "checkout-msg";
+
+  fetch("/.netlify/functions/create-payment", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items, email })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if(data.init_point){
+        localStorage.setItem("alliance_last_email", email);
+        window.location.href = data.init_point;
+      } else {
+        checkoutBtn.disabled = false;
+        checkoutMsg.textContent = data.error || "No pudimos iniciar el pago. Probá de nuevo.";
+        checkoutMsg.className = "checkout-msg error";
+      }
+    })
+    .catch(() => {
+      checkoutBtn.disabled = false;
+      checkoutMsg.textContent = "No pudimos conectar con el servidor de pagos. Probá de nuevo.";
+      checkoutMsg.className = "checkout-msg error";
+    });
+});
+
+// Restaurar el último email usado, si había
+const lastEmail = localStorage.getItem("alliance_last_email");
+if(lastEmail) cartEmailEl.value = lastEmail;
+
+renderCartUI();
+
+// Banner de resultado al volver de Mercado Pago
+const urlParams = new URLSearchParams(window.location.search);
+const pago = urlParams.get("pago");
+const banner = document.getElementById("paymentBanner");
+if(pago === "exito"){
+  banner.innerHTML = '<div class="payment-banner-inner ok">¡Pago aprobado! En unos minutos te llega un mail con las claves de acceso de tus cursos.</div>';
+  localStorage.removeItem(CART_KEY);
+} else if(pago === "pendiente"){
+  banner.innerHTML = '<div class="payment-banner-inner pending">Tu pago está pendiente de confirmación. Apenas se apruebe, te llega el mail con las claves.</div>';
+} else if(pago === "error"){
+  banner.innerHTML = '<div class="payment-banner-inner error">El pago no se pudo completar. Podés intentarlo de nuevo desde el carrito.</div>';
+}
+</script>
+
+</body>
+</html>
