@@ -40,7 +40,7 @@
   .hero .gold-rule{ width:56px; height:3px; background:var(--gold); margin:28px auto 0; }
 
   /* ---------- CATALOG GRID ---------- */
-  .catalog{ max-width:1180px; margin:-56px auto 0; padding:0 6vw 100px; position:relative; z-index:2; }
+  .catalog{ max-width:1180px; margin:32px auto 0; padding:0 6vw 100px; position:relative; z-index:2; }
   .grid{ display:grid; grid-template-columns:1fr; gap:28px; }
   @media(min-width:720px){ .grid{ grid-template-columns:1fr 1fr; } }
   @media(min-width:1080px){ .grid{ grid-template-columns:1fr 1fr 1fr; } }
@@ -165,6 +165,22 @@
   .payment-banner-inner.error{ background:#fbe9e6; color:var(--error); border:1px solid #f0c3bb; }
   .payment-banner-inner.pending{ background:#fff6e6; color:#8a6416; border:1px solid #f0dcae; }
 
+  .promo-banner{ max-width:1180px; margin:-46px auto 0; padding:0 6vw; position:relative; z-index:3; }
+  .promo-banner-inner{
+    background:linear-gradient(100deg, #b5894e 0%, #c99a5c 100%);
+    border-radius:14px; padding:22px 30px;
+    display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap;
+    text-align:center; box-shadow:0 10px 30px rgba(181,137,78,.35);
+  }
+  .promo-banner-inner .promo-icon{ font-size:26px; }
+  .promo-banner-inner .promo-text{ color:#fff; font-size:16.5px; font-weight:700; line-height:1.4; }
+  .promo-banner-inner .promo-text b{ font-weight:800; text-decoration:underline; text-underline-offset:4px; }
+  .promo-banner-inner .promo-cta{
+    background:#0d2440; color:#fff; font-size:14px; font-weight:800;
+    padding:11px 22px; border-radius:40px; white-space:nowrap; letter-spacing:.3px;
+  }
+  @media(max-width:640px){ .promo-banner-inner{ padding:20px 22px; } .promo-banner-inner .promo-text{ font-size:14.5px; } }
+
   @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
 </style>
 </head>
@@ -185,6 +201,14 @@
   <p>Doce cursos en PDF, organizados por módulos, para vender mejor, tasar con criterio y construir una carrera sostenible en el rubro.</p>
   <div class="gold-rule"></div>
 </section>
+
+<div class="promo-banner">
+  <div class="promo-banner-inner">
+    <span class="promo-icon">🎁</span>
+    <span class="promo-text">Armá tu pack: <b>6 cursos por $90.000</b> o llevate <b>los 12 por $120.000</b></span>
+    <span class="promo-cta">Se aplica solo en el carrito</span>
+  </div>
+</div>
 
 <main class="catalog" id="catalogo">
   <div class="payment-banner" id="paymentBanner"></div>
@@ -548,8 +572,17 @@ function removeFromCart(slug){
 
 function calcularTotalCarrito(items){
   const todos = CURSOS.map(c => c.slug);
-  const esPackCompleto = items.length === todos.length && todos.every(s => items.includes(s));
-  const total = esPackCompleto ? 120000 : items.length * 20000;
+  const n = items.length;
+  const esPackCompleto = n === todos.length && todos.every(s => items.includes(s));
+
+  let total;
+  if(esPackCompleto){
+    total = 120000;
+  } else if(n >= 6){
+    total = 90000 + (n - 6) * 20000;
+  } else {
+    total = n * 20000;
+  }
   return { total, esPackCompleto };
 }
 
@@ -587,8 +620,14 @@ function renderCartUI(){
 
   if(items.length === CURSOS.length){
     html += `<div class="cart-bundle-hint">🎉 Llevás los 12 cursos — se aplicó el precio de pack completo: $120.000 en vez de $240.000.</div>`;
-  } else if(items.length >= 8){
-    html += `<div class="cart-bundle-hint">Te faltan ${CURSOS.length - items.length} para el pack completo: los 12 juntos salen $120.000 en vez de pagarlos por separado.</div>`;
+  } else if(items.length >= 9){
+    const faltan = CURSOS.length - items.length;
+    html += `<div class="cart-bundle-hint">Te ${faltan === 1 ? 'falta 1 curso' : `faltan ${faltan} cursos`} para el pack completo: los 12 juntos salen $120.000 en vez de seguir sumando de a uno.</div>`;
+  } else if(items.length >= 6){
+    html += `<div class="cart-bundle-hint">🎉 Ya activaste el precio de pack de 6: $90.000 base + $20.000 por cada curso extra. Llegá a los 12 y pagás $120.000 fijo.</div>`;
+  } else {
+    const faltan = 6 - items.length;
+    html += `<div class="cart-bundle-hint">Agregá ${faltan === 1 ? '1 curso más' : `${faltan} cursos más`} y activás el precio de pack: 6 cursos por $90.000.</div>`;
   }
 
   cartItemsEl.innerHTML = html;
