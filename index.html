@@ -87,7 +87,7 @@
   /* ---------- PANEL DE COMENTARIOS (lateral) ---------- */
   .comments-overlay{ position:fixed; inset:0; background:rgba(13,36,64,.55); z-index:95; display:none; }
   .comments-overlay.open{ display:block; }
-  .comments-drawer{ position:fixed; top:0; right:0; bottom:0; width:100%; max-width:460px; background:#fff; z-index:96; transform:translateX(100%); transition:transform .25s ease; display:flex; flex-direction:column; }
+  .comments-drawer{ position:fixed; top:0; right:0; bottom:0; width:100%; max-width:640px; background:#fff; z-index:96; transform:translateX(100%); transition:transform .25s ease; display:flex; flex-direction:column; }
   .comments-drawer.open{ transform:translateX(0); }
   .comments-modal-head{ background:var(--navy); color:#fff; padding:20px 22px; display:flex; justify-content:space-between; align-items:center; gap:14px; }
   .comments-modal-head h3{ font-weight:300; font-size:16px; }
@@ -95,6 +95,12 @@
   .comments-modal-close{ background:none; border:none; color:#fff; font-size:24px; cursor:pointer; line-height:1; flex-shrink:0; }
   .comments-modal-body{ flex:1; overflow-y:auto; padding:22px; }
   .cusdis-mount{ min-height:120px; }
+  /* Cusdis arma su propio iframe adentro de #cusdis_thread con una altura
+     fija chica (~200px) y scroll interno propio, lo que generaba el doble
+     scroll diminuto. Forzamos que el iframe crezca con el contenido y que
+     el único scroll sea el del panel completo. */
+  #cusdis_thread{ min-height:70vh; }
+  #cusdis_thread iframe{ min-height:70vh !important; height:70vh !important; width:100% !important; border:none !important; }
 
   /* ---------- CONSULTAS ---------- */
   .consult{ border-top:1px solid var(--linea); padding-top:16px; }
